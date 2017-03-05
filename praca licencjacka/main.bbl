@@ -1,0 +1,90 @@
+\begin{thebibliography}{xx}
+
+\harvarditem{Akkaya \harvardand\ Uzar}{2011}{Akkaya2011}
+Akkaya, G.~C. \harvardand\ Uzar, C.  \harvardyearleft 2011\harvardyearright ,
+  `{Data Mining in Financial Application}', {\em Journal of Modern Accounting
+  and Auditing} {\bf 7}(12),~1362--1367.
+
+\harvarditem{Aragianni \harvardand\ Fetsos}{2010}{Aragianni2010}
+Aragianni, S. T.~K. \harvardand\ Fetsos, T. H.~S.  \harvardyearleft
+  2010\harvardyearright , `{Extracting Formations From Long Financial Time
+  Series Using Data Mining}',  {\bf 53},~273--293.
+
+\harvarditem{{Biecek, Przemysław
+  Trajkowski}}{2011}{BiecekPrzemysawTrajkowski2011}
+{Biecek, Przemysław Trajkowski}, K.  \harvardyearleft 2011\harvardyearright ,
+  {\em {Na przełaj przez Data Mining}}.
+\newline\harvardurl{http://www.biecek.pl/NaPrzelajPrzezDataMining}
+
+\harvarditem{Bulkowski \harvardand\ Wiley}{2005}{Bulkowski2005}
+Bulkowski, T.~N. \harvardand\ Wiley, J.  \harvardyearleft 2005\harvardyearright
+  , {\em {Encyclopedia of Chart Patterns}}.
+
+\harvarditem{Constantine \harvardand\ Percival}{2014}{ifultools}
+Constantine, W. \harvardand\ Percival, D.  \harvardyearleft
+  2014\harvardyearright , {\em ifultools: Insightful Research Tools}.
+\newblock R package version 2.0-1.
+\newline\harvardurl{http://CRAN.R-project.org/package=ifultools}
+
+\harvarditem[Dante et~al.]{Dante, {De Pison Francisco J} \harvardand\
+  Alpha}{2010}{Dante2010}
+Dante, C., {De Pison Francisco J}, M. \harvardand\ Alpha, P.  \harvardyearleft
+  2010\harvardyearright , `{Finding temporal associative rules in financial
+  time-series: A case of study in Madrid Stock Exchange (IGBM)}',  pp.~60--68.
+
+\harvarditem{Gandhmal}{2011}{Gandhmal2011}
+Gandhmal, D.~P.  \harvardyearleft 2011\harvardyearright , `{An Optimized
+  Approach to Analyze Stock market using Data Mining Technique}', {\em
+  International Journal of Computer Applications} pp.~38--42.
+
+\harvarditem{Huk}{2001}{Huk2001}
+Huk, M.  \harvardyearleft 2001\harvardyearright , {Wygładzanie i filtrowanie
+  danych z przeznaczeniem do interpretacji widm spektroskopowych}.
+
+\harvarditem{Kaastra \harvardand\ Boyd}{1996}{Kaastra1996}
+Kaastra, I. \harvardand\ Boyd, M.  \harvardyearleft 1996\harvardyearright ,
+  `{Designing a neural network for forecasting financial and economic time
+  series}'.
+
+\harvarditem[Khan et~al.]{Khan, Baharudin \harvardand\ Khan}{2011}{Khan2011}
+Khan, A., Baharudin, B. \harvardand\ Khan, K.  \harvardyearleft
+  2011\harvardyearright , `{Mining Customer Data for Decision Making Using New
+  Hybrid Classification Algorithm}', {\em Journal of Theoretical and Applied
+  Information Technology} .
+
+\harvarditem[Killick et~al.]{Killick, Eckley \harvardand\
+  Haynes}{2014}{changepoint}
+Killick, R., Eckley, I. \harvardand\ Haynes, K.  \harvardyearleft
+  2014\harvardyearright , {\em changepoint: An R package for changepoint
+  analysis}.
+\newblock R package version 1.1.5.
+\newline\harvardurl{http://CRAN.R-project.org/package=changepoint}
+
+\harvarditem{Kufel}{2005}{Kufel2005}
+Kufel, T.  \harvardyearleft 2005\harvardyearright , `{Narzędzia ekonometrii
+  dynamicznej w oprogramowaniu GRETL}',  (2002),~6--8.
+
+\harvarditem{Murphy}{1999}{Murphy1999}
+Murphy, J.~J.  \harvardyearleft 1999\harvardyearright , {\em {John J Murphy -
+  Technical Analysis Of The Financial Markets.pdf}}, Vol.~77.
+\newline\harvardurl{http://www.ncbi.nlm.nih.gov/pubmed/20599625}
+
+\harvarditem{Virili \harvardand\ Freisleben}{2001}{Virili2001}
+Virili, F. \harvardand\ Freisleben, B.  \harvardyearleft 2001\harvardyearright
+  , `{Neural Network Model Selection Financial Time Series Prediction
+  Anders-Korn model selection strategies}', {\em Computing} (200 I).
+
+\harvarditem{Weigend}{1996}{Weigend1996}
+Weigend, A.~S.  \harvardyearleft 1996\harvardyearright , `{Data Mining in
+  Finance Report from the Post-NNCM-96 Workshop on Teaching Computer Intensive
+  Methods for Financial Modeling and Data Analysis}', {\em Decision
+  Technologies for Financial Engineering} pp.~399--412.
+\newline\harvardurl{www.stern.nyu.edu/~aweigend}
+
+\harvarditem{Zhang \harvardand\ Zhou}{2004}{Zhang2004}
+Zhang, D. \harvardand\ Zhou, L.  \harvardyearleft 2004\harvardyearright ,
+  `{Discovering golden nuggets: Data mining in financial application}', {\em
+  IEEE Transactions on Systems, Man and Cybernetics Part C: Applications and
+  Reviews} {\bf 34}(4),~513--522.
+
+\end{thebibliography}

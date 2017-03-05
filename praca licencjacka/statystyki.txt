@@ -1,0 +1,32 @@
+Linear segmentation
+
+statystyki czasu trwania:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.000   5.000   5.000   7.544   8.000 139.000 
+  
+statystyki trendu:
+    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+-20.4100  -1.8610   0.2303   0.5904   2.5010 103.6000 
+
+statystyki czasu trwania:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   0.00    3.75    7.00   10.87   14.00  123.00 
+   
+statystyki trendu:
+    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+-33.9600  -2.0380   0.4083   0.8047   2.8700  42.3800 
+
+
+Szeregiem czasowym, który u¿y³em jest WIG20 (16.4.1991 r. - 3.3.2015 r.). Dane te postanowi³em "odszumiæ" stosuj¹æ filtr Savitzky-Golay oraz Baxter'a-King'a, ostatecznie decyduj¹c siê na ten pierwszy. 
+Nastêpnym krokiem jest segmentacja szeregu. Do tego celu najpierw zastosowa³em funkcjê cpt.mean z pakietu changepoint. Dok³adnie algorytm ten nazywa siê Binary Segmentation (segmentacja binarna?). Polega on na tym, i¿ na samym pocz¹tku sprawdzane jest, czy w danym szeregu znajduje siê punkt zmiany œredniej istotny statystycznie. Jeœli taki punkt istnieje, dane dzielone s¹ na pó³, i dla ka¿dej czêœci ponownie szukany jest taki punkt. Algorytm ten jest przeprowadzany dopóki ¿aden punkt zmiany w ¿adnej czêœci nie zostaje wykryty.
+Alternatywnym sposobem segmentacji, który zastosowa³em jest wbudowana w R funkcja linearSegmentation, która dokonuje podzia³u na segmenty o wybranej przez u¿ytkownika szerokoœci, a nastêpnie ³¹czy te s¹siaduj¹ce elementy, dla których k¹t nachylenia prostych wyznaczonych metod¹ najmniejszych kwadratów jest mniejszy b¹dŸ równy ni¿ k¹t tolerancji (te¿ parametr). 
+Nastêpnie dla obu metod zastosowa³em w³asn¹ funkcjê, która ³¹czy te segmenty dla których trend jest podobny (parametr podobieñstwa zadajemy sami). Trend w danym segmencie wyznaczany jest ze wzoru: ((y_ost.obs - y_pier.obs) / y_pier.obs) * 100.
+Wykresy przedstawiaj¹ce oryginalny szereg czasowy, szereg po uzyciu filtru Savitzky-Golay, zastosowanie funkcji cpt.mean, linear Segmentation oraz póŸniejsze zastosowanie mojej funkcji MergeSimilarTrends dla ró¿nych parametrów za³¹czy³em do tego maila (1.pdf, 2.pdf).
+Po zastosowaniu powy¿szych metod, do dalszych dzia³añ zdecydowa³em siê wybraæ segmenty wyznaczone za pomoc¹ funkcji cpt.mean, a nastêpnie MergeSimilarTrends (0.5%)- 508 segmenty, oraz wyznaczone za pomoc¹ linearSegmentation (5 dni, 0.1), a nastêpnie Merge SimilarTrends (0.5%)- 732 segmenty.
+Kolejnym krokiem by³a odpowiednia klasyfikacja trendów i ich czasu trwania oraz ich symboliczna reprezentacja. By tego dokonaæ za pomoc¹ statystyk opisowych oraz histogramów dokona³em subiektywnie podzia³u:
+  -dla pierwszego wektora segmentów (wyznaczonego z funkcji cpt.mean) sklasyfikowa³em segmenty pod wzglêdem czasu trwania na krótkie (S - do 3 dni), œrednie (M - 3-10 dni) i d³ugie (L- powy¿ej 10 dni) oraz pod wzglêdem trendu: bardzo spadkowy (VN- poni¿ej -2,5%), spadkowy (N - pomiêdzy -2,5% a -1%), horyzontalny (C- pomiêdzy -1% a 1%), wzrostowy (P - pomiêdzy 1% a 2,5%) , bardzo wzrostowy (VP - powy¿ej 2,5%)
+  -dla drugiego wektora sklasyfikowa³em segmenty pod wzglêdem czasu trwania na krótkie (S - do 5 dni), œrednie (M - 5-10 dni) i d³ugie (L- powy¿ej 10 dni) oraz pod wzglêdem trendu: bardzo spadkowy (VN- poni¿ej -2,5%), spadkowy (N - pomiêdzy -2,5% a -1%), horyzontalny (C- pomiêdzy -1% a 1%), wzrostowy (P - pomiêdzy 1% a 2,5%) , bardzo wzrostowy ( VP - powy¿ej 2,5%).
+Czyli np. segment oznaczony jako VP_L bêdzie segmentem d³ugim, w którym panowa³ trend bardzo wzrostowy.
+Ostatnim elementem jest u¿ycie algorytmu apriori do wyznaczenia regu³ asocjacyjnych. Dla obu przypadków maksymalne opóŸnienie, dla którego wyjaœniany jest ostatni segment wynosi 3. Wyznaczone regu³y asocjacyjne za³¹czam jako pliki regu³y1.txt oraz regu³y2.txt. 
+
+

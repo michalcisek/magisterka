@@ -1,0 +1,15 @@
+\select@language {polish}
+\contentsline {figure}{\numberline {1}{\ignorespaces WIG20 18.04.94 r. - 08.05.15 r.}}{16}{figure.caption.2}
+\contentsline {figure}{\numberline {2}{\ignorespaces Por\IeC {\'o}wnanie zastosowania filtru Savitzky'ego-Golaya dla r\IeC {\'o}\IeC {\.z}nych zestaw\IeC {\'o}w parametr\IeC {\'o}w}}{17}{figure.caption.3}
+\contentsline {figure}{\numberline {3}{\ignorespaces U\IeC {\.z}yty filtr Savitzky'ego-Golaya}}{18}{figure.caption.4}
+\contentsline {figure}{\numberline {4}{\ignorespaces Zastosowanie funkcji linearSegmentation, a nast\IeC {\k e}pnie MergeSimilarTrends}}{19}{figure.caption.5}
+\contentsline {figure}{\numberline {5}{\ignorespaces Histogram rozkladu wygladzonego szeregu WIG20}}{20}{figure.caption.6}
+\contentsline {figure}{\numberline {6}{\ignorespaces Histogram rozkladu pierwszych r\IeC {\'o}\IeC {\.z}nic wygladzonego szeregu WIG20}}{21}{figure.caption.7}
+\contentsline {figure}{\numberline {7}{\ignorespaces Zastosowanie funkcji cpt.mean, a nast\IeC {\k e}pnie MergeSimilarTrends}}{22}{figure.caption.9}
+\contentsline {figure}{\numberline {8}{\ignorespaces Por\IeC {\'o}wnanie pierwotnego, odszumionego i posegmentowanego szeregu WIG20}}{23}{figure.caption.10}
+\contentsline {figure}{\numberline {9}{\ignorespaces Histogram czasu trwania- segmentacja liniowa oraz binarna}}{24}{figure.caption.13}
+\contentsline {figure}{\numberline {10}{\ignorespaces Histogram trend\IeC {\'o}w panuj\IeC {\k a}cych w segmentach dla segmentacji liniowej oraz binarnej}}{25}{figure.caption.14}
+\contentsline {figure}{\numberline {11}{\ignorespaces Wykres rozrzutu trendu i czasu trwania dla Binary Segmentation}}{26}{figure.caption.15}
+\contentsline {figure}{\numberline {12}{\ignorespaces Wykres rozrzutu trendu i czasu trwania dla Linear Segmentation}}{27}{figure.caption.16}
+\contentsline {figure}{\numberline {13}{\ignorespaces Graficzna reprezentacja klastrowania dla Binary Segmentation}}{28}{figure.caption.17}
+\contentsline {figure}{\numberline {14}{\ignorespaces Graficzna reprezentacja klastrowania dla Linear Segmentation}}{29}{figure.caption.18}

@@ -1,0 +1,20 @@
+\select@language {polish}
+\contentsline {section}{\numberline {1}Wprowdzenie}{5}{section.1}
+\contentsline {section}{\numberline {2}Metodologia}{7}{section.2}
+\contentsline {subsection}{\numberline {2.1}Czyszczenie danych}{7}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Segmentacja}{8}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Symboliczna reprezentacja segment\IeC {\'o}w}{12}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.4}Rule extraction}{12}{subsection.2.4}
+\contentsline {subsection}{\numberline {2.5}Ocena jako\IeC {\'s}ci algorytmu}{13}{subsection.2.5}
+\contentsline {section}{\numberline {3}Zastosowanie algorytmu \\ dla indeksu gie\IeC {\l }dowego WIG20}{15}{section.3}
+\contentsline {subsection}{\numberline {3.1}Czyszczenie danych filtrem Savitzky'ego-Golaya}{16}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Segmentacja danych}{18}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Budowa s\IeC {\l }ownika}{23}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Wygenerowanie regu\IeC {\l } asocjacyjnych}{29}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}Ocena algorytmu}{33}{subsection.3.5}
+\contentsline {section}{\numberline {4}Podsumowanie}{36}{section.4}
+\contentsline {section}{\numberline {A}Dodatek: Tabela wsp\IeC {\'o}\IeC {\l }czynnik\IeC {\'o}w wielomianu kwadratowego dla filtra Savitzky'ego-Golaya}{38}{appendix.A}
+\contentsline {section}{\numberline {B}Dodatek: Kod R}{39}{appendix.B}
+\contentsline {section}{Lista tablic}{53}{section*.24}
+\contentsline {section}{Lista rysunk\IeC {\'o}w}{54}{section*.25}
+\contentsline {section}{Streszczenie}{55}{section*.26}
