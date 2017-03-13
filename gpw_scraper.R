@@ -27,8 +27,8 @@ pobierz_akcje<-function(date){
 }
 
 # akcje<-pblapply(dni,pobierz_akcje)
-akcje<-vector("list",6759)
-for(i in 2718:6759){
+akcje<-vector("list",length(dni))
+for(i in 1:length(dni)){
   tryCatch({
       akcje[[i]]<-pobierz_akcje(dni[i])
       print(i)
@@ -45,7 +45,7 @@ for(i in 2718:6759){
 
 #sprawdzenie brakow i proba dogrania na te dni
 braki<-c()
-for(i in 1:6759){
+for(i in 1:length(dni)){
   if(nrow(akcje[[i]])==0 | length(akcje[[i]])==0){
     braki[i] <- 1
   } else {
@@ -59,24 +59,31 @@ for(i in braki){
   akcje[[i]]<-pobierz_akcje(dni[i])
 }
 
-
-
-#zmiana listy na ramkę danych i dorzucenie daty
-# pr<-do.call(rbind,akcje)
-notowania<-data.frame("data"=character(0),"nazwa"=character(0),"ISIN"=character(0),"waluta"=character(0),"otwarcie"=character(0),"maksimum"=character(0),
-                      "minimum"=character(0),"zamkniecie"=character(0),"zmiana_kursu"=character(0),"wolumen"=character(0),
-                      "transakcje"=character(0),"wartosc_obrotu"=character(0))
-for(i in 1:6759){
-  if(nrow(akcje[[i]])==0 | length(akcje[[i]])==0){
-    next
-  } else {
-    notowania <- rbind(notowania,data.frame(dni[i],akcje[[i]]))
-  }
-}
+#zmiana listy na ramkę danych i dorzucenie daty (ZROBIC BENCHMARK ROZNYCH METOD)
+l_akcji<-sapply(akcje,nrow)
+names(l_akcji)<-dni
+daty<-unlist(sapply(1:length(dni), function(x) rep(names(l_akcji)[x],l_akcji[x])))
+notowania<-do.call(rbind,akcje)
+notowania<-data.frame(daty,notowania)
 colnames(notowania)<-c("data","nazwa","ISIN","waluta","otwarcie","maksimum","minimum","zamkniecie","zmiana_kursu","wolumen",
                        "transakcje","wartosc_obrotu")
-notowania$data <- as.character(notowania$data)
-notowania$data <- as.Date(notowania$data)
+notowania$data<-as.character(notowania$data)
+
+# ZLY POMYSL !!!
+# notowania<-data.frame("data"=character(0),"nazwa"=character(0),"ISIN"=character(0),"waluta"=character(0),"otwarcie"=character(0),"maksimum"=character(0),
+#                       "minimum"=character(0),"zamkniecie"=character(0),"zmiana_kursu"=character(0),"wolumen"=character(0),
+#                       "transakcje"=character(0),"wartosc_obrotu"=character(0))
+# for(i in 1:length(dni)){
+#   if(nrow(akcje[[i]])==0 | length(akcje[[i]])==0){
+#     next
+#   } else {
+#     notowania <- rbind(notowania,data.frame(dni[i],akcje[[i]]))
+#   }
+# }
+# colnames(notowania)<-c("data","nazwa","ISIN","waluta","otwarcie","maksimum","minimum","zamkniecie","zmiana_kursu","wolumen",
+#                        "transakcje","wartosc_obrotu")
+# notowania$data <- as.character(notowania$data)
+# notowania$data <- as.Date(notowania$data)
 
 #konwersja zmiennych znakowych do numerycznych
 konwertuj_do_numerycznej<-function(kolumna){
