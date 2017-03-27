@@ -8,3 +8,10 @@ Hipotezą badawczą jest sprawdzenie możliwości zastosowania metod uczenia mas
 
 Metody badawcze, w tym wykorzystane dane
 W pracy zostanie zaprezentowany i użyty stosunkowo nowy i dynamicznie rozwijający się nurt w dziedzinie uczenia maszynowego, zwany klasyfikacją kombinowaną (ensemble learning). Pozwala on na użycie wielu klasyfikatorów (drzew decyzyjnych, SVM, sieci neuronowych, lasów losowych itd.) tak, aby wykorzystać ich najlepsze cechy i kompetencje potrzebne do rozwiązania danego problemu decyzyjnego. Ponadto zastosowane będą narzędzia uczenia nienadzorowanego, w celu wyodrębnienia różnych reżimów panujących na rynkach finansowych. Taki zabieg ma na celu lepsze zrozumienie przez klasyfikatory zachodzących zjawisk dla różnych trendów. Dane zostaną pobrane dla wszystkich spółek notowanych na Giełdzie Papierów Wartościowych w Warszawie dla maksymalnie długiego okresu czasu za pomocą serwisu stooq.pl. W roli zmiennych objaśniających wystąpią różne wskaźniki analizy technicznej, fundamentalnej plus w miarę możliwości zmienne sentymentu otrzymane za pomocą text miningu.
+
+
+
+
+Hipoteza rynku efektywnego, intensywnie rozwijana od drugiej połowy XX wieku, zakłada że pojawienie się informacji na rynku prowadzi do natychmiastowego jej odzwierciedlenia w cenie instrumentu finansowego. Szczegółowiej, rynek można określić jako efektywny w przypadku spełnienia szeregu założeń. Do tych postulatów można zaliczyć między innymi bezpłatność informacji, równa ich dostępność dla wszystkich uczestników rynku, czy brak kosztów transakcyjnych. Istnieją trzy wersje hipotezy: słaba, półsilna i silna. Każda z nich zakłada niemożliwość osiągnięcia ponadprzeciętnych zysków poprzez używanie metod analizy technicznej. Najbardziej skrajna zaprzecza też użyteczności analizy fundamentalnej, a nawet wyklucza insider trading, jako możliwy sposób na „pokonanie” rynku. 
+
+Argumentów przemawiających przeciwko teorii rynku efektywnego pojawiło się wiele na przestrzeni lat. Jeśli chodzi o 
