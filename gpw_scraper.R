@@ -26,6 +26,7 @@ pobierz_akcje<-function(date){
   return(df)
 }
 
+
 # akcje<-pblapply(dni,pobierz_akcje)
 akcje<-vector("list",length(dni))
 for(i in 1:length(dni)){
