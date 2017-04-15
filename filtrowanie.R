@@ -2,6 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(tibble)
 library(TTR)
+library(RSQLite)
 
 db <- dbConnect(SQLite(), dbname = "notowania_gpw.sqlite")
 
@@ -34,14 +35,28 @@ pods %>%
 dane %>% 
   filter(nazwa %in% pods$nazwa) %>%
   filter(otwarcie != 0 | maksimum != 0 | minimum != 0) %>% 
-  group_by(nazwa) %>% 
-  do(mutate(., CCI = CCI(`[`(., c('maksimum', 'minimum', 'zamkniecie'))))) -> dane
+  group_by(nazwa) 
 
 
-kghm <- filter(dane, nazwa == "KGHM")
+library(lubridate)
+install.packages("RcppRoll")
+library(RcppRoll)
+library(quantmod)
 
-ggplot(kghm, aes(x = as.Date(data))) +
-  geom_line(aes(y = zamkniecie))
+
+dane %>% 
+  filter(nazwa=="KGHM") %>%
+  select(data, zamkniecie) %>% 
+  filter(year(data) == 2016) %>% 
+  mutate(momentum = ifelse(zamkniecie > lag(zamkniecie), 1, -1)) %>% 
+  mutate(stock_momentum = roll_meanr(momentum, 5)) %>% 
+  mutate(arit_return = c(Delt(zamkniecie, k=1))) %>% 
+  mutate(volatility = roll_meanr(arit_return, 5))
+
+
+
+# do policzenia danego wskaznika w pipie dla kazdej akcji
+#do(mutate(., CCI = CCI(`[`(., c('maksimum', 'minimum', 'zamkniecie'))))) -> dane
 
 
 
