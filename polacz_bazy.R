@@ -1,7 +1,12 @@
+#####
+##### PLIK SLUZACY DO ZMERGOWANIA MNIEJSZYCH BAZ DANYCH PRZETRZYMYWANYCH NA GITHUBIE ZE WZGLEDU NA LIMIT
+#####
 library(sqldf)
 library(RSQLite)
 
 
+
+#wczytanie danych z pojedynczych baz dostepnych na githubie
 db <- dbConnect(SQLite(), dbname = "notowania_gpw_2000.sqlite")
 s2000 <- dbGetQuery(db, "select * from notowania_2000")
 dbDisconnect(db)
@@ -22,7 +27,7 @@ db <- dbConnect(SQLite(), dbname = "notowania_gpw_2020.sqlite")
 s2020 <- dbGetQuery(db, "select * from notowania_2020")
 dbDisconnect(db)
 
-
+#zbindowanie danych do jednej ramki danych
 dane <- rbind(s2000, s2005, s2010, s2015, s2020)
 rm(s2000, s2005, s2010, s2015, s2020)
 

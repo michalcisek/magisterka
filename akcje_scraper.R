@@ -8,7 +8,7 @@ library(sqldf)
 dni <- seq(as.Date("1991-04-16"),as.Date("2017-03-10"),by="days")
 dni <- dni[-which(weekdays(dni) %in% c("sobota","niedziela"))]
 
-
+#funkcja pobierajaca notowania akcji na zadany dzien
 pobierz_akcje<-function(date){
   
   web<-read_html(paste("https://www.gpw.pl/notowania_archiwalne_full?type=10&date=",date, sep=""))
@@ -27,6 +27,7 @@ pobierz_akcje<-function(date){
 }
 
 
+#pobieranie notowan na kolejne dni, wraz z obsluga bledu kiedy wyskakuje timeout
 # akcje<-pblapply(dni,pobierz_akcje)
 akcje<-vector("list",length(dni))
 for(i in 1:length(dni)){
@@ -60,7 +61,7 @@ for(i in braki){
   akcje[[i]]<-pobierz_akcje(dni[i])
 }
 
-#zmiana listy na ramkę danych i dorzucenie daty (ZROBIC BENCHMARK ROZNYCH METOD)
+#zmiana listy na ramkę danych i dorzucenie daty
 l_akcji<-sapply(akcje,nrow)
 names(l_akcji)<-dni
 daty<-unlist(sapply(1:length(dni), function(x) rep(names(l_akcji)[x],l_akcji[x])))
@@ -70,21 +71,6 @@ colnames(notowania)<-c("data","nazwa","ISIN","waluta","otwarcie","maksimum","min
                        "transakcje","wartosc_obrotu")
 notowania$data<-as.character(notowania$data)
 
-# ZLY POMYSL !!!
-# notowania<-data.frame("data"=character(0),"nazwa"=character(0),"ISIN"=character(0),"waluta"=character(0),"otwarcie"=character(0),"maksimum"=character(0),
-#                       "minimum"=character(0),"zamkniecie"=character(0),"zmiana_kursu"=character(0),"wolumen"=character(0),
-#                       "transakcje"=character(0),"wartosc_obrotu"=character(0))
-# for(i in 1:length(dni)){
-#   if(nrow(akcje[[i]])==0 | length(akcje[[i]])==0){
-#     next
-#   } else {
-#     notowania <- rbind(notowania,data.frame(dni[i],akcje[[i]]))
-#   }
-# }
-# colnames(notowania)<-c("data","nazwa","ISIN","waluta","otwarcie","maksimum","minimum","zamkniecie","zmiana_kursu","wolumen",
-#                        "transakcje","wartosc_obrotu")
-# notowania$data <- as.character(notowania$data)
-# notowania$data <- as.Date(notowania$data)
 
 #konwersja zmiennych znakowych do numerycznych
 konwertuj_do_numerycznej<-function(kolumna){
@@ -96,9 +82,7 @@ konwertuj_do_numerycznej<-function(kolumna){
 
 notowania[,5:12]<-sapply(colnames(notowania)[5:12],konwertuj_do_numerycznej)
 
-#1623715 rekordow
-
-#zapis do bazy danych SQL
+#zapis do bazy danych SQL z rozbiciem na mniejsze pliki tak zeby wrzucic na githuba
 db <- dbConnect(SQLite(), dbname="notowania_gpw_2000.sqlite")
 dbSendQuery(db, "create table notowania_2000
             (data date,

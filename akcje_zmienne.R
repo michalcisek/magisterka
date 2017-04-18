@@ -3,10 +3,13 @@ library(ggplot2)
 library(tibble)
 library(TTR)
 library(RSQLite)
+library(lubridate)
+library(RcppRoll)
+library(quantmod)
 
-db <- dbConnect(SQLite(), dbname = "notowania_gpw.sqlite")
 
 #pobranie danych z bazy
+db <- dbConnect(SQLite(), dbname = "notowania_gpw.sqlite")
 dane <- dbGetQuery(db, "select * from notowania")
 
 #funkcja zwracajaca podsumowanie dotyczace akcji (ile notowan, data pierwszego i ostatniego notowania)
@@ -30,36 +33,28 @@ maks_data <- max(pods$max)
 #subset spolek debiutujacych przed 2016 rokiem i ktore nadal sa notowane
 pods %>% 
   filter(max == maks_data, min < '2016-01-01') %>%
-  arrange(desc(l_dni)) -> pods
+  arrange(desc(l_dni)) -> wybrane_akcje
+
+rm(pods)
 
 dane %>% 
-  filter(nazwa %in% pods$nazwa) %>%
+  select(-one_of('ISIN', 'waluta', 'zmiana_kursu', 'transakcje', 'wartosc_obrotu')) %>% 
+  filter(nazwa %in% wybrane_akcje$nazwa) %>%
   filter(otwarcie != 0 | maksimum != 0 | minimum != 0) %>% 
-  group_by(nazwa) 
-
-
-library(lubridate)
-install.packages("RcppRoll")
-library(RcppRoll)
-library(quantmod)
-
-
-dane %>% 
-  filter(nazwa=="KGHM") %>%
-  select(data, zamkniecie) %>% 
-  filter(year(data) == 2016) %>% 
-  mutate(momentum = ifelse(zamkniecie > lag(zamkniecie), 1, -1)) %>% 
-  mutate(stock_momentum = roll_meanr(momentum, 5)) %>% 
-  mutate(arit_return = c(Delt(zamkniecie, k=1))) %>% 
-  mutate(volatility = roll_meanr(arit_return, 5))
-
+  group_by(nazwa) %>% 
+  #wyliczenie momentum
+  do(mutate(., momentum = roll_meanr(ifelse(zamkniecie >= lag(zamkniecie), 1, -1), 5))) %>% 
+  #wyliczenie volatility
+  do(mutate(., volatility = roll_meanr(c(Delt(zamkniecie, k=1)), 5))) %>% 
+  do(mutate(., return_5 = c(Delt(zamkniecie, k=5)))) %>% 
+  do(mutate(., ret_5 = lead(return_5, 5))) %>% 
+  View
+  
+  # `[`(complete.cases(.),)
+  
 
 
 # do policzenia danego wskaznika w pipie dla kazdej akcji
 #do(mutate(., CCI = CCI(`[`(., c('maksimum', 'minimum', 'zamkniecie'))))) -> dane
-
-
-
-
 
 dbDisconnect(db)
