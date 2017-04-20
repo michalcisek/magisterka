@@ -35,6 +35,7 @@ pods %>%
   filter(max == maks_data, min < '2016-01-01') %>%
   arrange(desc(l_dni)) -> wybrane_akcje
 
+saveRDS(wybrane_akcje, "wybrane_akcje.rds")
 rm(pods)
 
 dane %>% 

@@ -7,6 +7,7 @@ spolki <- dbGetQuery(db, "select distinct nazwa, ISIN from notowania")
 dbDisconnect(db)
 
 #wybieramy tylko te spolki ktore spelnialy wymagania w skrypcie filtrowanie.R
+wybrane_akcje <- readRDS("wybrane_akcje.rds")
 spolki <- spolki[which(spolki$nazwa %in% wybrane_akcje$nazwa), ]
 
 #slownik indeksow sektorowych
@@ -37,7 +38,11 @@ scrapuj_przynaleznosc <- function(isin){
 przynaleznosc <- sapply(spolki$ISIN, scrapuj_przynaleznosc)
 #zapis przynaleznosci do pliku RDS
 df <- data.frame(spolki, przynaleznosc)
-saveRDS()
+saveRDS(df, "przynaleznosc_sektor.rds")
+rm(df)
+#zaladowanie pliku RDS
+przynaleznosc <- readRDS("przynaleznosc_sektor.rds")
+
 
 #funkcja wyciagajaca z przynaleznosci tylko udzial w indeksie sektorowym danej spolki
 dopasuj_sektor <- function(tekst){
@@ -54,5 +59,27 @@ dopasuj_sektor <- function(tekst){
 }
 
 #przypisanie spolce indeksu sektorowego do ktorego nalezy
-spolki$sektor <- sapply(przynaleznosc, dopasuj_sektor) 
+spolki$sektor <- sapply(przynaleznosc$przynaleznosc, dopasuj_sektor) 
 spolki$sektor <- unlist(spolki$sektor)
+
+
+
+
+db <- dbConnect(SQLite(), dbname = "notowania_gpw.sqlite")
+indeksy <- dbGetQuery(db, "select * from indeksy")
+dbDisconnect(db)
+
+
+library(dplyr)
+
+indeksy %>% 
+  select(-one_of('ISIN', 'waluta', 'zmiana_kursu', 'wolumen', 'transakcje', 'wartosc_obrotu')) %>% 
+  filter(nazwa %in% sektory) %>% 
+  group_by(nazwa) %>% 
+  #wyliczenie momentum
+  do(mutate(., momentum = roll_meanr(ifelse(zamkniecie >= lag(zamkniecie), 1, -1), 5))) %>% 
+  #wyliczenie volatility
+  do(mutate(., volatility = roll_meanr(c(Delt(zamkniecie, k=1)), 5))) %>% 
+  do(mutate(., return_5 = c(Delt(zamkniecie, k=5)))) %>% 
+  do(mutate(., ret_5 = lead(return_5, 5))) %>% 
+  View  

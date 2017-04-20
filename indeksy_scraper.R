@@ -101,5 +101,3 @@ dbSendQuery(db, "create table indeksy
 dbWriteTable(db, "indeksy", notowania, overwrite=T)
 query <- dbGetQuery(db,"select * from indeksy")
 dbDisconnect(db)
-
-
