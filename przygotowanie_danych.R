@@ -59,6 +59,14 @@ dopasuj_sektor <- function(tekst, zbior_indeksow){
 db <- dbConnect(SQLite(), dbname = "notowania_gpw.sqlite")
 dane_akcje <- dbGetQuery(db, "select * from notowania")
 
+#wstepna obrobka danych
+dane_akcje %>% 
+  #wyrzucenie niepotrzebnych kolumn
+  select(-one_of('waluta', 'zmiana_kursu', 'transakcje', 'wartosc_obrotu')) %>% 
+  #odfiltrowanie rekordow dla ktorych nie bylo ceny maks, min i otwarcia - czyli z dawnych lat
+  filter(otwarcie != 0 | maksimum != 0 | minimum != 0) %>% 
+  group_by(nazwa) -> dane_akcje
+
 #wektor unikalnych nazw akcji w bazie
 akcje <- unique(dane_akcje$nazwa)
 
@@ -78,19 +86,21 @@ rm(pods)
 
 
 #funkcja przygotowujaca notowania akcji - odfiltrowanie, wyliczenie zmiennych
-przygotuj_dane_akcje <- function(dane, vol, mom, ret){
+przygotuj_dane_akcje <- function(dane, stock_param, ret){
   
   dane %>% 
-    select(-one_of('waluta', 'zmiana_kursu', 'transakcje', 'wartosc_obrotu')) %>% 
-    filter(nazwa %in% wybrane_akcje$nazwa) %>%
-    filter(otwarcie != 0 | maksimum != 0 | minimum != 0) %>% 
-    group_by(nazwa) %>% 
+    filter(nazwa %in% wybrane_akcje$nazwa) %>% 
+    summarise(l_notowan = n()) %>% 
+    filter(l_notowan > ret) -> pods
+  
+  dane %>% 
+    filter(nazwa %in% pods$nazwa) %>% 
     #wyliczenie momentum
-    do(mutate(., stock_momentum = roll_meanr(ifelse(zamkniecie >= lag(zamkniecie), 1, -1), mom))) %>% 
+    do(mutate(., stock_momentum = roll_meanr(ifelse(zamkniecie >= lag(zamkniecie), 1, -1), stock_param))) %>% 
     #wyliczenie volatility
-    do(mutate(., stock_volatility = roll_meanr(c(Delt(zamkniecie, k=1)), vol))) %>% 
+    do(mutate(., stock_volatility = roll_meanr(c(Delt(zamkniecie, k=1)), stock_param))) %>%  
     #wyliczenie opoznionych zwrotow
-    do(mutate(., lagged_return = lead(c(Delt(zamkniecie, k=ret)), ret))) %>%
+    do(mutate(., lagged_return = lead(c(Delt(zamkniecie, k=ret)), ret))) %>% 
     #wyliczenie zmiennej objasnianej
     mutate(target = factor(ifelse(lagged_return >= 0, 1, 0))) %>% 
     #wybranie tylko kompletnych wierszy
@@ -120,7 +130,7 @@ spolki <- spolki[which(spolki$nazwa %in% wybrane_akcje$nazwa), ]
 indeksy_sektorowe <- c('WIG-BANKI', 'WIG-BUDOW', 'WIG-CHEMIA', 'WIG-ENERG', 'WIG-GORNIC', 
              'WIG-INFO', 'WIG-LEKI', 'WIG-MEDIA', 'WIG-MOTO', 'WIG-NRCHOM', 
              'WIG-ODZIEZ', 'WIG-PALIWA', 'WIG-SPOZYW', 'WIG-TELEKOM')
-
+indeks_najwiekszych <- c('WIG20')
 
 #pobranie/zaladowanie przynaleznosci akcji do indeksow
 if (pobierz_przynaleznosc){
@@ -134,7 +144,8 @@ if (pobierz_przynaleznosc){
 
 
 #przypisanie spolce indeksu (ze wskazanego zbioru) do ktorego nalezy
-zbior_indeksow <- indeksy_sektorowe
+zbior_indeksow <- indeks_najwiekszych
+
 spolki$sektor <- sapply(przynaleznosc$przynaleznosc, function(x) dopasuj_sektor(x, zbior_indeksow = zbior_indeksow)) 
 spolki$sektor <- unlist(spolki$sektor)
 spolki[which(is.na(spolki$sektor)), "sektor"] <- "brak"
@@ -144,16 +155,16 @@ dane_indeksy <- dbGetQuery(db, "select * from indeksy")
 dbDisconnect(db)
 rm(db, przynaleznosc)
 
-przygotuj_dane_indeksy <- function(dane, vol, mom, ret){
+przygotuj_dane_indeksy <- function(dane, index_param){
   
   dane %>% 
     select(-one_of('waluta', 'zmiana_kursu', 'wolumen', 'transakcje', 'wartosc_obrotu')) %>% 
     filter(nazwa %in% zbior_indeksow) %>% 
     group_by(nazwa) %>% 
     #wyliczenie momentum
-    do(mutate(., index_momentum = roll_meanr(ifelse(zamkniecie >= lag(zamkniecie), 1, -1), mom))) %>% 
+    do(mutate(., index_momentum = roll_meanr(ifelse(zamkniecie >= lag(zamkniecie), 1, -1), index_param))) %>% 
     #wyliczenie volatility
-    do(mutate(., index_volatility = roll_meanr(c(Delt(zamkniecie, k=1)), vol))) %>% 
+    do(mutate(., index_volatility = roll_meanr(c(Delt(zamkniecie, k=1)), index_param))) %>% 
     #wybranie tylko kompletnych wierszy
     `[`(complete.cases(.), ) -> got_dane
   
@@ -163,32 +174,72 @@ przygotuj_dane_indeksy <- function(dane, vol, mom, ret){
 
 
 # Polaczenie notowan akcji i indeksow -------------------------------------
+index_params <- c(5, 10, 20, 90, 270)
+stock_params <- c(5, 10, 20, 90, 270)
+return_params <- c(1, 5, 10, 20, 90, 270)
+lista <- list(index_params, stock_params, return_params)
+wszystkie_kombinacje <- do.call(expand.grid, lista)
+wyniki <- data.frame(stock_param=integer(), index_param=integer(), ret_param=integer(), accuracy=double(),
+                     czas=double(), rows=integer())
+conf_matrix <- list()
+library(caret)
+library(e1071)
 
-filt_akcje <- tbl_df(przygotuj_dane_akcje(dane_akcje, 5, 5, 5))
-filt_indeksy <- tbl_df(przygotuj_dane_indeksy(dane_indeksy, 5, 5, 5))
+test_model <- function(dane_akcje, dane_indeksy, stock_param, index_param, return_param){
+  filt_akcje <- tbl_df(przygotuj_dane_akcje(dane_akcje, stock_param, return_param))
+  filt_indeksy <- tbl_df(przygotuj_dane_indeksy(dane_indeksy, index_param))
+  
+  filt_akcje %>% 
+    #dolaczenie do notowan akcji indeksu do jakiego nalezy
+    left_join(., tbl_df(spolki), by=c("nazwa"="nazwa", "ISIN"="ISIN")) %>% 
+    #dolaczenie do notowan akcji notowan indeksu do jakiego nalezy
+    left_join(., filt_indeksy, by=c("sektor"="nazwa", "data"="data")) %>% 
+    #pozbycie sie niepotrzebnych kolumn
+    select(-one_of("ISIN.y","otwarcie.y", "maksimum.y", "minimum.y", "zamkniecie.y")) %>% 
+    #zmiana indeksu na zmienna kategoryczna
+    mutate(sektor = factor(sektor)) %>% 
+    #odfiltrowanie spolek ktore nie naleza do wskazanego zbioru indeksow (np. indeksow sektorowych)
+    filter(sektor != 'brak') %>% 
+    #odfiltrowanie wierszy ktore zawieraja braki danych (na wszelki wypadke)
+    `[`(complete.cases(.), ) -> final_dane
 
 
-filt_akcje %>% 
-  #dolaczenie do notowan akcji indeksu do jakiego nalezy
-  left_join(., tbl_df(spolki), by=c("nazwa"="nazwa", "ISIN"="ISIN")) %>% 
-  #dolaczenie do notowan akcji notowan indeksu do jakiego nalezy
-  left_join(., filt_indeksy, by=c("sektor"="nazwa", "data"="data")) %>% 
-  #pozbycie sie niepotrzebnych kolumn
-  select(-one_of("ISIN.y","otwarcie.y", "maksimum.y", "minimum.y", "zamkniecie.y")) %>% 
-  #zmiana indeksu na zmienna kategoryczna
-  mutate(sektor = factor(sektor)) %>% 
-  #odfiltrowanie spolek ktore nie naleza do wskazanego zbioru indeksow (np. indeksow sektorowych)
-  filter(sektor != 'brak') %>% 
-  #odfiltrowanie wierszy ktore zawieraja braki danych (na wszelki wypadke)
-  `[`(complete.cases(.), ) -> final_dane
+  tren <- createDataPartition(final_dane$target, p=0.6, list = F)
+  
+  trening <- final_dane[tren, c("target", "stock_momentum", "stock_volatility", 
+                                "index_momentum", "index_volatility")]
+  test <- final_dane[-tren, c("target", "stock_momentum", "stock_volatility", 
+                              "index_momentum", "index_volatility")]
+  
+  
+  czas <- system.time(svm_model_casual <- svm(target ~ ., data=trening))
+
+  pred <- predict(svm_model_casual, trening)
+  wyn <- caret::confusionMatrix(pred, trening$target)
+  
+  confs <- wyn$table
+  
+  ret <- data.frame(stock_param = stock_param, index_param = index_param, ret_param = return_param,
+             accuracy = wyn$overall[1], czas = as.numeric(czas[3]), rows = nrow(trening))
+
+  wyniki <<- rbind(wyniki, ret)
+  
+  return(confs)
+}
+
+
+for(i in 1:nrow(wszystkie_kombinacje)){
+  conf_matrix[[i]] <- 
+    test_model(dane_akcje = dane_akcje, dane_indeksy = dane_indeksy, stock_param = wszystkie_kombinacje[i, 1], 
+               index_param = wszystkie_kombinacje[i, 2], return_param = wszystkie_kombinacje[i, 3])
+  print(i)
+  flush.console()
+}
 
 
 rm(spolki, wybrane_akcje, pobierz_przynaleznosc)
 
 
-
-library(caret)
-library(e1071)
 
 rm(dane_akcje, dane_indeksy, filt_akcje, filt_indeksy)
 
