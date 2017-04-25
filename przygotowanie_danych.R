@@ -228,7 +228,7 @@ test_model <- function(dane_akcje, dane_indeksy, stock_param, index_param, retur
 }
 
 
-for(i in 1:nrow(wszystkie_kombinacje)){
+for(i in 101:nrow(wszystkie_kombinacje)){
   conf_matrix[[i]] <- 
     test_model(dane_akcje = dane_akcje, dane_indeksy = dane_indeksy, stock_param = wszystkie_kombinacje[i, 1], 
                index_param = wszystkie_kombinacje[i, 2], return_param = wszystkie_kombinacje[i, 3])
