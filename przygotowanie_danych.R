@@ -184,6 +184,7 @@ wyniki <- data.frame(stock_param=integer(), index_param=integer(), ret_param=int
 conf_matrix <- list()
 library(caret)
 library(e1071)
+library(randomForest)
 
 test_model <- function(dane_akcje, dane_indeksy, stock_param, index_param, return_param){
   filt_akcje <- tbl_df(przygotuj_dane_akcje(dane_akcje, stock_param, return_param))
@@ -212,9 +213,10 @@ test_model <- function(dane_akcje, dane_indeksy, stock_param, index_param, retur
                               "index_momentum", "index_volatility")]
   
   
-  czas <- system.time(svm_model_casual <- svm(target ~ ., data=trening))
-
-  pred <- predict(svm_model_casual, trening)
+  # czas <- system.time(svm_model_casual <- svm(target ~ ., data=trening))
+  czas <- system.time(rf <- randomForest(target ~ ., data=trening))
+  
+  pred <- predict(rf, trening)
   wyn <- caret::confusionMatrix(pred, trening$target)
   
   confs <- wyn$table
@@ -228,7 +230,7 @@ test_model <- function(dane_akcje, dane_indeksy, stock_param, index_param, retur
 }
 
 
-for(i in 101:nrow(wszystkie_kombinacje)){
+for(i in 1:nrow(wszystkie_kombinacje)){
   conf_matrix[[i]] <- 
     test_model(dane_akcje = dane_akcje, dane_indeksy = dane_indeksy, stock_param = wszystkie_kombinacje[i, 1], 
                index_param = wszystkie_kombinacje[i, 2], return_param = wszystkie_kombinacje[i, 3])
@@ -237,64 +239,18 @@ for(i in 101:nrow(wszystkie_kombinacje)){
 }
 
 
+readRDS(wyniki,"svm_wyniki.rds")
+
+ggplot(svm_wyniki, aes(x=stock_param, y=index_param))+
+  geom_bin2d()+
+  facet_grid(ret_param ~ .)
+
+
 rm(spolki, wybrane_akcje, pobierz_przynaleznosc)
-
-
-
 rm(dane_akcje, dane_indeksy, filt_akcje, filt_indeksy)
 
 
-levels(final_dane$target) <- c("spadek", "wzrost")
 
-tren <- createDataPartition(final_dane$target, p=0.6, list = F)
-
-trening <- final_dane[tren, c("target", "stock_momentum", "stock_volatility", 
-                              "index_momentum", "index_volatility")]
-test <- final_dane[-tren, c("target", "stock_momentum", "stock_volatility", 
-                            "index_momentum", "index_volatility")]
-
-
-system.time(svm_model <- svm(target ~ ., data=trening))
-
-
-pred <- predict(svm_model, test)
-
-#################
-#################
-### BUILDING ####
-#################
-#################
-
-
-library(caret)
-
-levels(final_dane$target) <- c("down", "up")
-
-tren <- createDataPartition(final_dane$target, p=0.66, list = F)
-
-trening <- final_dane[tren, c("target", "stock_momentum", "stock_volatility", 
-                              "index_momentum", "index_volatility")]
-test <- final_dane[-tren, c("target", "stock_momentum", "stock_volatility", 
-                            "index_momentum", "index_volatility")]
-
-
-svm_fit <- train(target ~ ., data=trening, method="svmRadial")
-
-
-
-ctrl <- trainControl(method="repeatedcv",   # 10fold cross validation
-                     repeats=5,		    # do 5 repititions of cv
-                     summaryFunction=twoClassSummary,	# Use AUC to pick the best model
-                     classProbs=TRUE)
-
-
-#Train and Tune the SVM
-svm.tune <- train(target ~ ., data=trening,
-                  method = "svmRadial",   # Radial kernel
-                  tuneLength = 9,					# 9 values of the cost function
-                  #preProc = c("center","scale"),  # Center and scale data
-                  metric="ROC",
-                  trControl=ctrl)
 
 svm.tune
 # do policzenia danego wskaznika w pipie dla kazdej akcji
