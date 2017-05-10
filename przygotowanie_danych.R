@@ -6,6 +6,7 @@ library(RSQLite)
 library(lubridate)
 library(RcppRoll)
 library(quantmod)
+library(caret)
 
 
 # Funkcje -----------------------------------------------------------------
@@ -52,6 +53,37 @@ dopasuj_sektor <- function(tekst, zbior_indeksow){
     return(sektor)
   }
 }
+
+#zwraca liste najmniej podobnych modeli z pakietu Caret na podstawie wsp. podob. Jaccarda
+#nazwa - nazwa modelu po ktorym ma nastapic przeszukiwanie
+#liczba - ile najmniej podobnych modeli ma być zwroconych
+#typ - typ modeli po ktorych funkcja ma szukac, np. "Classification", "Regression"
+max_model_roznice <- function(nazwa, liczba, typ){
+  
+  tag <- read.csv("tag_data.csv", row.names = 1)
+  tag <- as.matrix(tag)
+  
+  Models <- tag[tag[,typ] == 1,]
+  
+  all <- 1:nrow(Models)
+  
+  start <- grep(paste("(", nazwa,")", sep=""), rownames(Models), fixed = TRUE)
+  pool <- all[all != start]
+  
+  nextMods <- maxDissim(Models[start,,drop = FALSE], 
+                        Models[pool, ], 
+                        method = "Jaccard",
+                        n = liczba)
+  
+  models <- rownames(Models)[c(start, nextMods)]
+  print(models)
+  
+  regmatches(models, gregexpr("(?<=\\().*?(?=\\))", models, perl=T)) %>% 
+    unlist -> models
+  
+  return(models)
+}
+
 
 # Przygotowanie notowan akcji ---------------------------------------------
 
@@ -174,19 +206,38 @@ przygotuj_dane_indeksy <- function(dane, index_param){
 
 
 # Polaczenie notowan akcji i indeksow -------------------------------------
-index_params <- c(5, 10, 20, 90, 270)
-stock_params <- c(5, 10, 20, 90, 270)
-return_params <- c(1, 5, 10, 20, 90, 270)
-lista <- list(index_params, stock_params, return_params)
-wszystkie_kombinacje <- do.call(expand.grid, lista)
-wyniki <- data.frame(stock_param=integer(), index_param=integer(), ret_param=integer(), accuracy=double(),
-                     czas=double(), rows=integer())
-conf_matrix <- list()
-library(caret)
-library(e1071)
-library(randomForest)
+# index_params <- c(5, 10, 20, 90, 270)
+# stock_params <- c(5, 10, 20, 90, 270)
+# return_params <- c(1, 5, 10, 20, 90, 270)
 
-test_model <- function(dane_akcje, dane_indeksy, stock_param, index_param, return_param){
+
+
+trenuj_model <- function(model, seed){
+  fitControl <- trainControl(
+    method = "cv",
+    number = 3,
+    savePredictions = 'all',
+    classProbs = T)
+  
+  set.seed(seed)
+  wyn_model <- train(x = trening[, independent], y = make.names(trening$target),
+                     method = model,
+                     trControl = fitControl,
+                     tuneLength = 5)
+  
+  saveRDS(wyn_model, paste(model, ".rds", sep=""))
+  
+  wynik <- ifelse(exists("wyn_model", inherits = F), 
+                  paste("Wyniki modelu ", model, " zapisane!", sep=""),
+                  paste("Cos sie nie udalo ...", sep=""))
+  return(wynik)
+}
+
+
+
+tren_model <- function(dane_akcje, dane_indeksy, stock_param, index_param, return_param){
+  
+
   filt_akcje <- tbl_df(przygotuj_dane_akcje(dane_akcje, stock_param, return_param))
   filt_indeksy <- tbl_df(przygotuj_dane_indeksy(dane_indeksy, index_param))
   
@@ -204,7 +255,8 @@ test_model <- function(dane_akcje, dane_indeksy, stock_param, index_param, retur
     #odfiltrowanie wierszy ktore zawieraja braki danych (na wszelki wypadke)
     `[`(complete.cases(.), ) -> final_dane
 
-
+  
+  set.seed(56283)
   tren <- createDataPartition(final_dane$target, p=0.6, list = F)
   
   trening <- final_dane[tren, c("target", "stock_momentum", "stock_volatility", 
@@ -212,38 +264,19 @@ test_model <- function(dane_akcje, dane_indeksy, stock_param, index_param, retur
   test <- final_dane[-tren, c("target", "stock_momentum", "stock_volatility", 
                               "index_momentum", "index_volatility")]
   
-  
-  # czas <- system.time(svm_model_casual <- svm(target ~ ., data=trening))
-  czas <- system.time(rf <- randomForest(target ~ ., data=trening))
-  
-  pred <- predict(rf, trening)
-  wyn <- caret::confusionMatrix(pred, trening$target)
-  
-  confs <- wyn$table
-  
-  ret <- data.frame(stock_param = stock_param, index_param = index_param, ret_param = return_param,
-             accuracy = wyn$overall[1], czas = as.numeric(czas[3]), rows = nrow(trening))
 
-  wyniki <<- rbind(wyniki, ret)
+  dependent <- "target"
+  independent <- c("stock_momentum", "stock_volatility", "index_momentum", "index_volatility")
   
-  return(confs)
+  models <- max_model_roznice("svmRadial", 10, "Classification")
+  
+  suppressWarnings(apply(models, function(x) trenuj_model(x, 56283)))
+  
 }
 
+tren_model(dane_akcje = dane_akcje, dane_indeksy = dane_indeksy, stock_param = 5, index_param = 5,
+           return_param = 1)
 
-for(i in 1:nrow(wszystkie_kombinacje)){
-  conf_matrix[[i]] <- 
-    test_model(dane_akcje = dane_akcje, dane_indeksy = dane_indeksy, stock_param = wszystkie_kombinacje[i, 1], 
-               index_param = wszystkie_kombinacje[i, 2], return_param = wszystkie_kombinacje[i, 3])
-  print(i)
-  flush.console()
-}
-
-
-readRDS(wyniki,"svm_wyniki.rds")
-
-ggplot(svm_wyniki, aes(x=stock_param, y=index_param))+
-  geom_bin2d()+
-  facet_grid(ret_param ~ .)
 
 
 rm(spolki, wybrane_akcje, pobierz_przynaleznosc)
@@ -255,9 +288,6 @@ rm(dane_akcje, dane_indeksy, filt_akcje, filt_indeksy)
 svm.tune
 # do policzenia danego wskaznika w pipie dla kazdej akcji
 #do(mutate(., CCI = CCI(`[`(., c('maksimum', 'minimum', 'zamkniecie'))))) -> dane
-
-
-
 
 
 
