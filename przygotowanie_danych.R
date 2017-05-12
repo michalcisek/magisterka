@@ -1,4 +1,3 @@
-library(dplyr)
 library(ggplot2)
 library(tibble)
 library(TTR)
@@ -7,6 +6,7 @@ library(lubridate)
 library(RcppRoll)
 library(quantmod)
 library(caret)
+library(dplyr)
 
 
 # Funkcje -----------------------------------------------------------------
@@ -211,71 +211,220 @@ przygotuj_dane_indeksy <- function(dane, index_param){
 # return_params <- c(1, 5, 10, 20, 90, 270)
 
 
-
-trenuj_model <- function(model, seed){
-  fitControl <- trainControl(
-    method = "cv",
-    number = 3,
-    savePredictions = 'all',
-    classProbs = T)
+stock_param <- 5
+index_param <- 5
+return_param <- 1
   
-  set.seed(seed)
-  wyn_model <- train(x = trening[, independent], y = make.names(trening$target),
-                     method = model,
-                     trControl = fitControl,
-                     tuneLength = 5)
   
-  saveRDS(wyn_model, paste(model, ".rds", sep=""))
+filt_akcje <- tbl_df(przygotuj_dane_akcje(dane_akcje, stock_param, return_param))
+filt_indeksy <- tbl_df(przygotuj_dane_indeksy(dane_indeksy, index_param))
   
-  wynik <- ifelse(exists("wyn_model", inherits = F), 
-                  paste("Wyniki modelu ", model, " zapisane!", sep=""),
-                  paste("Cos sie nie udalo ...", sep=""))
-  return(wynik)
-}
-
-
-
-tren_model <- function(dane_akcje, dane_indeksy, stock_param, index_param, return_param){
-  
-
-  filt_akcje <- tbl_df(przygotuj_dane_akcje(dane_akcje, stock_param, return_param))
-  filt_indeksy <- tbl_df(przygotuj_dane_indeksy(dane_indeksy, index_param))
-  
-  filt_akcje %>% 
-    #dolaczenie do notowan akcji indeksu do jakiego nalezy
-    left_join(., tbl_df(spolki), by=c("nazwa"="nazwa", "ISIN"="ISIN")) %>% 
-    #dolaczenie do notowan akcji notowan indeksu do jakiego nalezy
-    left_join(., filt_indeksy, by=c("sektor"="nazwa", "data"="data")) %>% 
-    #pozbycie sie niepotrzebnych kolumn
-    select(-one_of("ISIN.y","otwarcie.y", "maksimum.y", "minimum.y", "zamkniecie.y")) %>% 
-    #zmiana indeksu na zmienna kategoryczna
-    mutate(sektor = factor(sektor)) %>% 
-    #odfiltrowanie spolek ktore nie naleza do wskazanego zbioru indeksow (np. indeksow sektorowych)
-    filter(sektor != 'brak') %>% 
-    #odfiltrowanie wierszy ktore zawieraja braki danych (na wszelki wypadke)
-    `[`(complete.cases(.), ) -> final_dane
+filt_akcje %>% 
+  #dolaczenie do notowan akcji indeksu do jakiego nalezy
+  left_join(., tbl_df(spolki), by=c("nazwa"="nazwa", "ISIN"="ISIN")) %>% 
+  #dolaczenie do notowan akcji notowan indeksu do jakiego nalezy
+  left_join(., filt_indeksy, by=c("sektor"="nazwa", "data"="data")) %>% 
+  #pozbycie sie niepotrzebnych kolumn
+  select(-one_of("ISIN.y","otwarcie.y", "maksimum.y", "minimum.y", "zamkniecie.y")) %>% 
+  #zmiana indeksu na zmienna kategoryczna
+  mutate(sektor = factor(sektor)) %>% 
+  #odfiltrowanie spolek ktore nie naleza do wskazanego zbioru indeksow (np. indeksow sektorowych)
+  filter(sektor != 'brak') %>% 
+  #odfiltrowanie wierszy ktore zawieraja braki danych (na wszelki wypadke)
+  `[`(complete.cases(.), ) -> final_dane
 
   
-  set.seed(56283)
-  tren <- createDataPartition(final_dane$target, p=0.6, list = F)
-  
-  trening <- final_dane[tren, c("target", "stock_momentum", "stock_volatility", 
-                                "index_momentum", "index_volatility")]
-  test <- final_dane[-tren, c("target", "stock_momentum", "stock_volatility", 
+set.seed(56283)
+tren <- createDataPartition(final_dane$target, p=0.6, list = F)
+
+trening <- final_dane[tren, c("target", "stock_momentum", "stock_volatility", 
+                              "index_momentum", "index_volatility")]
+test <- final_dane[-tren, c("target", "stock_momentum", "stock_volatility", 
                               "index_momentum", "index_volatility")]
   
 
-  dependent <- "target"
-  independent <- c("stock_momentum", "stock_volatility", "index_momentum", "index_volatility")
+zalezna <- "target"
+niezalezne <- c("stock_momentum", "stock_volatility", "index_momentum", "index_volatility")
   
-  models <- max_model_roznice("svmRadial", 10, "Classification")
+# models <- max_model_roznice("xgbTree", 20, "Classification")
   
-  suppressWarnings(apply(models, function(x) trenuj_model(x, 56283)))
+
+fitControl <- trainControl(
+  method = "cv",
+  number = 3,
+  savePredictions = 'all',
+  classProbs = T)
+
+
+
+knnGrid <- expand.grid(k = c(3,5,10,20,30,50,100,200))
+set.seed(56283)
+tryCatch({knn_model <- train(x = trening[, niezalezne], y = make.names(trening$target),
+                             method = "knn",
+                             trControl = fitControl,
+                             tuneGrid = knnGrid,
+                             preProcess = c("center", "scale"))
+}, error = function(e){
+  blad <- e
+})
+
+if(exists("knn_model", inherits = F)){
+  saveRDS(knn_model, paste("knn_model.rds", sep=""))
+  wynik <- quote(paste("Wyniki modelu knn zapisane!"))
+} else{
+  wynik <- quote(writeLines(c("---------------------------------", as.character(blad), "---------------------------------")))
+}
   
+print(eval(wynik))
+rm(knn_model)  
+
+
+  
+rfGrid <- expand.grid(mtry = c(1,2,3,4))
+set.seed(56283)
+tryCatch({rf_model <- train(x = trening[, niezalezne], y = make.names(trening$target),
+                             method = "rf",
+                             trControl = fitControl,
+                             tuneGrid = rfGrid)
+}, error = function(e){
+  blad <- e
+})
+
+if(exists("rf_model", inherits = F)){
+  saveRDS(rf_model, paste("rf_model.rds", sep=""))
+  wynik <- quote(paste("Wyniki modelu random forest zapisane!"))
+} else{
+  wynik <- quote(writeLines(c("---------------------------------", as.character(blad), "---------------------------------")))
 }
 
-tren_model(dane_akcje = dane_akcje, dane_indeksy = dane_indeksy, stock_param = 5, index_param = 5,
-           return_param = 1)
+print(eval(wynik))
+rm(rf_model) 
+
+
+
+set.seed(56283)
+tryCatch({glm_model <- train(x = trening[, niezalezne], y = make.names(trening$target),
+                            method = "glm",
+                            trControl = fitControl,
+                            family="binomial")
+}, error = function(e){
+  blad <- e
+})
+
+if(exists("glm_model", inherits = F)){
+  saveRDS(glm_model, paste("glm_model.rds", sep=""))
+  wynik <- quote(paste("Wyniki modelu regresji logistycznej zapisane!"))
+} else{
+  wynik <- quote(writeLines(c("---------------------------------", as.character(blad), "---------------------------------")))
+}
+
+print(eval(wynik))
+rm(glm_model) 
+
+
+
+
+set.seed(56283)
+tryCatch({lda_model <- train(x = trening[, niezalezne], y = make.names(trening$target),
+                             method = "lda",
+                             trControl = fitControl)
+}, error = function(e){
+  blad <- e
+})
+
+if(exists("lda_model", inherits = F)){
+  saveRDS(lda_model, paste("lda_model.rds", sep=""))
+  wynik <- quote(paste("Wyniki modelu LDA zapisane!"))
+} else{
+  wynik <- quote(writeLines(c("---------------------------------", as.character(blad), "---------------------------------")))
+}
+
+print(eval(wynik))
+rm(lda_model) 
+  
+
+
+
+set.seed(56283)
+tryCatch({qda_model <- train(x = trening[, niezalezne], y = make.names(trening$target),
+                             method = "qda",
+                             trControl = fitControl)
+}, error = function(e){
+  blad <- e
+})
+
+if(exists("qda_model", inherits = F)){
+  saveRDS(qda_model, paste("qda_model.rds", sep=""))
+  wynik <- quote(paste("Wyniki modelu QDA zapisane!"))
+} else{
+  wynik <- quote(writeLines(c("---------------------------------", as.character(blad), "---------------------------------")))
+}
+
+print(eval(wynik))
+rm(qda_model) 
+  
+
+
+
+set.seed(56283)
+tryCatch({cart_model <- train(x = trening[, niezalezne], y = make.names(trening$target),
+                             method = "rpart",
+                             trControl = fitControl,
+                             tuneLength = 20)
+}, error = function(e){
+  blad <- e
+})
+
+if(exists("cart_model", inherits = F)){
+  saveRDS(cart_model, paste("cart_model.rds", sep=""))
+  wynik <- quote(paste("Wyniki modelu CART zapisane!"))
+} else{
+  wynik <- quote(writeLines(c("---------------------------------", as.character(blad), "---------------------------------")))
+}
+
+print(eval(wynik))
+rm(cart_model) 
+
+
+
+
+set.seed(56283)
+tryCatch({svmRadial_model <- train(x = trening[, niezalezne], y = make.names(trening$target),
+                              method = "svmRadial",
+                              trControl = fitControl,
+                              preProc = c("center", "scale"),
+                              tuneLength = 8)
+}, error = function(e){
+  blad <- e
+})
+
+if(exists("svmRadial_model", inherits = F)){
+  saveRDS(svmRadial_model, paste("svmRadial_model.rds", sep=""))
+  wynik <- quote(paste("Wyniki modelu svmRadial zapisane!"))
+} else{
+  wynik <- quote(writeLines(c("---------------------------------", as.character(blad), "---------------------------------")))
+}
+
+print(eval(wynik))
+
+  
+set.seed(56283)
+tryCatch({xgbTree_model <- train(x = trening[, niezalezne], y = make.names(trening$target),
+                                   method = "xgbTree",
+                                   trControl = fitControl,
+                                   tuneLength = 8)
+}, error = function(e){
+  blad <- e
+})
+
+if(exists("xgbTree_model", inherits = F)){
+  saveRDS(xgbTree_model, paste("xgbTree_model.rds", sep=""))
+  wynik <- quote(paste("Wyniki modelu xgbTree zapisane!"))
+} else{
+  wynik <- quote(writeLines(c("---------------------------------", as.character(blad), "---------------------------------")))
+}
+
+print(eval(wynik))
 
 
 
