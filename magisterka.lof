@@ -1,0 +1,20 @@
+\select@language {polish}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Wizualizacja drzewa decyzyjnego dla zbioru danych na temat pasa\IeC {\.z}er\IeC {\'o}w statku Titanic. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} opracowanie w\IeC {\l }asne\relax }}{16}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Wizualizacja 6 drzew decyzyjnych z lasu losowego dla zbioru danych na temat pasa\IeC {\.z}er\IeC {\'o}w statku Titanic. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} opracowanie w\IeC {\l }asne\relax }}{20}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Wykres funkcji logistycznej. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} opracowanie w\IeC {\l }asne\relax }}{25}
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Graficzna reprezentacja granicy decyzyjnej oraz wektor\IeC {\'o}w no\IeC {\'s}nych w metodzie SVM. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} opracowanie w\IeC {\l }asne\relax }}{29}
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Wizualizacja nieliniowo separowalnego zbioru danych, gdzie $X_1$ oraz $X_2$ s\IeC {\k a} zmiennymi obja\IeC {\'s}niaj\IeC {\k a}cymi, natomiast zmienna celu $Y$ zosta\IeC {\l }a zaznaczona kolorem. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} opracowanie w\IeC {\l }asne\relax }}{31}
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Wizualizacja nieliniowo separowalnego zbioru danych przeniesionego do wy\IeC {\.z}szego wymiaru za pomoc\IeC {\k a} funkcji j\IeC {\k a}drowej. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} opracowanie w\IeC {\l }asne\relax }}{32}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Dopasowanie regresji liniowej (kolor czerwony) oraz wielomianu stopnia 25. (kolor niebieski) do danych opisanych za pomoc\IeC {\k a} wzoru $500 + 0.4 * (x-10)^3 + \varepsilon $. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} opracowanie w\IeC {\l }asne\relax }}{39}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Wizualizacja problemu optymalnej z\IeC {\l }o\IeC {\.z}ono\IeC {\'s}ci modelu. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} opracowanie w\IeC {\l }asne\relax }}{40}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Dzia\IeC {\l }anie algorytmu \textit {Boosting} na sztucznie wygenerowanych danych. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} opracowanie w\IeC {\l }asne\relax }}{45}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Schemat dzia\IeC {\l }ania \textit {stackingu}. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} opracowanie w\IeC {\l }asne\relax }}{47}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Skuteczno\IeC {\'s}\IeC {\'c} r\IeC {\'o}\IeC {\.z}nych modeli bazowych na zbiorze treningowym dla 1-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{54}
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Skuteczno\IeC {\'s}\IeC {\'c} r\IeC {\'o}\IeC {\.z}nych modeli bazowych na zbiorze treningowym dla 90-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{54}
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Macierz korelacji mi\IeC {\k e}dzy prawdopodobie\IeC {\'n}stwami ze zbioru treningowego dla 1-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{56}
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Macierz korelacji mi\IeC {\k e}dzy prawdopodobie\IeC {\'n}stwami ze zbioru treningowego dla 90-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{57}
+\addvspace {10\p@ }

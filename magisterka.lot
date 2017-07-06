@@ -1,0 +1,28 @@
+\select@language {polish}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces Losowo wybrane obserwacje z oryginalnego zbioru danych dla notowanych sp\IeC {\'o}\IeC {\l }ek. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} \url {https://www.gpw.pl/notowania_archiwalne}\relax }}{49}
+\contentsline {table}{\numberline {4.2}{\ignorespaces Losowo wybrane obserwacje z oryginalnego zbioru danych dla notowanych indeks\IeC {\'o}w. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} \url {https://www.gpw.pl/notowania_archiwalne}\relax }}{50}
+\contentsline {table}{\numberline {4.3}{\ignorespaces Liczebno\IeC {\'s}\IeC {\'c} i \IeC {\'s}rednia warto\IeC {\'s}\IeC {\'c} obrotu dla dost\IeC {\k e}pnych indeks\IeC {\'o}w sektorowych oraz indeksu WIG20. Sk\IeC {\l }ad indeks\IeC {\'o}w na 10 marca 2017. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{51}
+\contentsline {table}{\numberline {4.4}{\ignorespaces Ustawienia parametr\IeC {\'o}w we wska\IeC {\'z}nikach analizy technicznej u\IeC {\.z}ytych w pracy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{51}
+\contentsline {table}{\numberline {4.5}{\ignorespaces Liczba przypadk\IeC {\'o}w kierunku zmiany cen akcji. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{52}
+\contentsline {table}{\numberline {4.6}{\ignorespaces Kombinacje parametr\IeC {\'o}w (do zmiennych obja\IeC {\'s}niaj\IeC {\k a}cych u\IeC {\.z}ywaj\IeC {\k a}cych notowa\IeC {\'n} akcji i indeks\IeC {\'o}w), oraz okien prognozy u\IeC {\.z}ytych w pracy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{58}
+\contentsline {table}{\numberline {4.7}{\ignorespaces Losowo wybrane obserwacje z przetworzonego zbioru danych. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{59}
+\contentsline {table}{\numberline {4.8}{\ignorespaces Kombinacje parametr\IeC {\'o}w w algorytmach uczenia maszynowego u\IeC {\.z}yte w pracy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{59}
+\contentsline {table}{\numberline {4.9}{\ignorespaces Skuteczno\IeC {\'s}\IeC {\'c} regu\IeC {\l } kombinowanych na zbiorze testowym dla 1-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{60}
+\contentsline {table}{\numberline {4.10}{\ignorespaces Oszacowania wsp\IeC {\'o}\IeC {\l }czynnik\IeC {\'o}w regresji logistycznej dla 20-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{60}
+\contentsline {table}{\numberline {4.11}{\ignorespaces Skuteczno\IeC {\'s}\IeC {\'c} 5 najlepszych modeli dla 1-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{60}
+\contentsline {table}{\numberline {4.12}{\ignorespaces Skuteczno\IeC {\'s}\IeC {\'c} 5 najlepszych modeli dla 5-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{61}
+\contentsline {table}{\numberline {4.13}{\ignorespaces Skuteczno\IeC {\'s}\IeC {\'c} 5 najlepszych modeli dla 10-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{61}
+\contentsline {table}{\numberline {4.14}{\ignorespaces Skuteczno\IeC {\'s}\IeC {\'c} 5 najlepszych modeli dla 20-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{61}
+\contentsline {table}{\numberline {4.15}{\ignorespaces Skuteczno\IeC {\'s}\IeC {\'c} 5 najlepszych modeli dla 90-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{61}
+\contentsline {table}{\numberline {4.16}{\ignorespaces Skuteczno\IeC {\'s}\IeC {\'c} 5 najlepszych modeli dla 270-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{62}
+\contentsline {table}{\numberline {4.17}{\ignorespaces Oszacowania wsp\IeC {\'o}\IeC {\l }czynnik\IeC {\'o}w dla kontaminacji modeli za pomoc\IeC {\k a} regresji logistycznej dla 1-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{62}
+\contentsline {table}{\numberline {4.18}{\ignorespaces Oszacowania wsp\IeC {\'o}\IeC {\l }czynnik\IeC {\'o}w dla kontaminacji modeli za pomoc\IeC {\k a} regresji logistycznej dla 5-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{62}
+\contentsline {table}{\numberline {4.19}{\ignorespaces Oszacowania wsp\IeC {\'o}\IeC {\l }czynnik\IeC {\'o}w dla kontaminacji modeli za pomoc\IeC {\k a} regresji logistycznej dla 10-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{62}
+\contentsline {table}{\numberline {4.20}{\ignorespaces Oszacowania wsp\IeC {\'o}\IeC {\l }czynnik\IeC {\'o}w dla kontaminacji modeli za pomoc\IeC {\k a} regresji logistycznej dla 20-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{63}
+\contentsline {table}{\numberline {4.21}{\ignorespaces Oszacowania wsp\IeC {\'o}\IeC {\l }czynnik\IeC {\'o}w dla kontaminacji modeli za pomoc\IeC {\k a} regresji logistycznej dla 90-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{63}
+\contentsline {table}{\numberline {4.22}{\ignorespaces Oszacowania wsp\IeC {\'o}\IeC {\l }czynnik\IeC {\'o}w dla kontaminacji modeli za pomoc\IeC {\k a} regresji logistycznej dla 270-dniowej prognozy. \textit {\IeC {\'Z}r\IeC {\'o}d\IeC {\l }o:} Opracowanie w\IeC {\l }asne\relax }}{63}
+\addvspace {10\p@ }
